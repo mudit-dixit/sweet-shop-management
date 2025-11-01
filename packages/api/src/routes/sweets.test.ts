@@ -85,4 +85,13 @@ describe('Sweets Routes', () => {
   const sweetInDb = await Sweet.findById(res.body._id);
   expect(sweetInDb?.name).toBe('Sour Patch Kids');
 });
+it('should return 200 and filtered sweets when searching by name', async () => {
+  const res = await request(app)
+    .get('/api/sweats/search?name=Gummy') // Search for 'Gummy'
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.length).toBe(1);
+  expect(res.body[0].name).toBe('Gummy Bears');
+});
 });
