@@ -3,6 +3,7 @@ import Sweet from '../models/sweet.model';
 
 export const getAllSweets = async (req: Request, res: Response) => {
   try {
+    // This sort is the critical part
     const sweets = await Sweet.find({}).sort({ createdAt: 1 });
     res.status(200).json(sweets);
   } catch (error) {

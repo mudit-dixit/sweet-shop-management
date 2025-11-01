@@ -37,16 +37,18 @@ describe('Sweets Routes', () => {
     await connectTestDB();
   });
 
-  beforeEach(async () => {
-    await clearTestDB();
-    userToken = await getAuthToken('USER');
-    adminToken = await getAuthToken('ADMIN');
+beforeEach(async () => {
+  await clearTestDB();
+  userToken = await getAuthToken('USER');
+  adminToken = await getAuthToken('ADMIN');
 
-    await Sweet.create([
-      { name: 'Gummy Bears', category: 'Candy', price: 1.99, quantity: 100 },
-      { name: 'Chocolate Bar', category: 'Chocolate', price: 2.49, quantity: 50 },
-    ]);
-  });
+  await Sweet.create(
+    { name: 'Gummy Bears', category: 'Candy', price: 1.99, quantity: 100 }
+  );
+  await Sweet.create(
+    { name: 'Chocolate Bar', category: 'Chocolate', price: 2.49, quantity: 50 }
+  );
+});
 
   afterAll(async () => {
     await disconnectTestDB();
