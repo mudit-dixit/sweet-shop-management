@@ -1,10 +1,14 @@
 import { Router } from 'express';
-import { getAllSweets } from '../controllers/sweet.controller';
+// Import both controllers
+import { getAllSweets, createSweet } from '../controllers/sweet.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Apply the authMiddleware to this route
-router.get('/', authMiddleware, getAllSweets);
+router.use(authMiddleware);
+
+// --- Routes ---
+router.get('/', getAllSweets);
+router.post('/', createSweet);
 
 export default router;

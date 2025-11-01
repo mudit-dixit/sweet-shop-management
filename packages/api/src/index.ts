@@ -13,6 +13,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 
 app.use('/api/auth', authRoutes); 
 app.use('/api/sweets', sweetsRoutes);
+
 // --- Server Start ---
 const PORT = process.env.PORT || 3001;
 if (process.env.NODE_ENV !== 'test') {
