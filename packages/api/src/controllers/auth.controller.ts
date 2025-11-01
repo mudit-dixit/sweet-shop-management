@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { registerUserService } from '../services/auth.service';
+import { registerUserService, loginUserService } from '../services/auth.service';
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -20,5 +20,26 @@ export const registerUser = async (req: Request, res: Response) => {
     // 5. If the service throws an error (like 'User already exists')
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
     res.status(400).json({ message });
+  }
+};
+
+export const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Basic Validation
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    // 2. Call the service
+    const token = await loginUserService({ email, password });
+
+    // 3. Success: Send token back
+    res.status(200).json({ token });
+  } catch (error) {
+    // 4. Failure: Service throws "Invalid credentials"
+    // We return 401 (Unauthorized)
+    res.status(401).json({ message: 'Invalid credentials' });
   }
 };
