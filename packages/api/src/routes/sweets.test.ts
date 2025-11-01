@@ -115,7 +115,6 @@ describe('Sweets Routes', () => {
     expect(res.statusCode).toBe(200);
   });
 
-  // --- NEW TESTS (Now with correct variable scope) ---
   it('should return 403 (Forbidden) if a regular user tries to delete a sweet', async () => {
     const sweetToDelete = await Sweet.findOne({ name: 'Gummy Bears' });
     const sweetId = sweetToDelete?._id;
@@ -136,4 +135,35 @@ describe('Sweets Routes', () => {
     const deletedSweet = await Sweet.findById(sweetId);
     expect(deletedSweet).toBeNull();
   });
+
+  it('should return 200 and decrease quantity when a user purchases a sweet', async () => {
+  const sweetToPurchase = await Sweet.findOne({ name: 'Gummy Bears' }); // quantity: 100
+  const sweetId = sweetToPurchase?._id;
+
+  const res = await request(app)
+    .post(`/api/sweets/${sweetId}/purchase`)
+    .set('Authorization', `Bearer ${userToken}`); // Regular user token
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.quantity).toBe(99); // Quantity should decrease by 1
+
+  // Check the database
+  const updatedSweet = await Sweet.findById(sweetId);
+  expect(updatedSweet?.quantity).toBe(99);
+});
+
+it('should return 400 if a user tries to purchase an out-of-stock sweet', async () => {
+  // Find a sweet and set its quantity to 0
+  const sweetToPurchase = await Sweet.findOne({ name: 'Gummy Bears' });
+  sweetToPurchase!.quantity = 0;
+  await sweetToPurchase!.save();
+  const sweetId = sweetToPurchase?._id;
+
+  const res = await request(app)
+    .post(`/api/sweets/${sweetId}/purchase`)
+    .set('Authorization', `Bearer ${userToken}`);
+
+  expect(res.statusCode).toBe(400);
+  expect(res.body.message).toBe('Sweet is out of stock');
+});
 });
