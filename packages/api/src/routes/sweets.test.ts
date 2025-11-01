@@ -87,7 +87,7 @@ describe('Sweets Routes', () => {
 });
 it('should return 200 and filtered sweets when searching by name', async () => {
   const res = await request(app)
-    .get('/api/sweats/search?name=Gummy') // Search for 'Gummy'
+    .get('/api/sweets/search?name=Gummy') // Search for 'Gummy'
     .set('Authorization', `Bearer ${token}`);
 
   expect(res.statusCode).toBe(200);
