@@ -10,7 +10,6 @@ import Sweet from '../models/sweet.model';
 
 // --- Test Helper: Get a valid token ---
 const getAuthToken = async () => {
-  // We need a user to log in
   await request(app).post('/api/auth/register').send({
     email: 'testuser@example.com',
     password: 'password123',
@@ -61,7 +60,29 @@ describe('Sweets Routes', () => {
       .set('Authorization', `Bearer ${token}`); // Use the token
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(2); // We expect the 2 sweets we created
+    expect(res.body.length).toBe(2);
     expect(res.body[0].name).toBe('Gummy Bears');
   });
+
+  it('should return 201 and the new sweet when creating one', async () => {
+  const newSweet = {
+    name: 'Sour Patch Kids',
+    category: 'Candy',
+    price: 2.99,
+    quantity: 75,
+  };
+
+  const res = await request(app)
+    .post('/api/sweets')
+    .set('Authorization', `Bearer ${token}`) // Use the token
+    .send(newSweet);
+
+  expect(res.statusCode).toBe(201);
+  expect(res.body.name).toBe('Sour Patch Kids');
+  expect(res.body.quantity).toBe(75);
+
+  // Check the database directly
+  const sweetInDb = await Sweet.findById(res.body._id);
+  expect(sweetInDb?.name).toBe('Sour Patch Kids');
+});
 });
