@@ -4,6 +4,7 @@ import {
   getAllSweets,
   createSweet,
   searchSweets,
+  updateSweet,
 } from '../controllers/sweet.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
@@ -16,5 +17,6 @@ router.use(authMiddleware);
 router.get('/', getAllSweets);
 router.post('/', createSweet);
 router.get('/search', searchSweets); 
+router.put('/:id', updateSweet);
 
 export default router;

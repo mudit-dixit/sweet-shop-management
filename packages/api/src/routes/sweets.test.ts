@@ -105,7 +105,6 @@ it('should return 200 and filtered sweets when searching by category', async () 
   expect(res.body[0].name).toBe('Chocolate Bar');
 });
 
-// --- ADD THIS NEW TEST (PRICE RANGE) ---
 it('should return 200 and filtered sweets when searching by price range', async () => {
   // 'Gummy Bears' (1.99), 'Chocolate Bar' (2.49)
   const res = await request(app)
@@ -134,6 +133,6 @@ it('should return 200 and the updated sweet when updating a sweet', async () => 
   expect(res.statusCode).toBe(200);
   expect(res.body.price).toBe(2.25);
   expect(res.body.quantity).toBe(110);
-  expect(res.body.name).toBe('Gummy Bears'); // Name should be unchanged
+  expect(res.body.name).toBe('Gummy Bears'); 
 });
 });
