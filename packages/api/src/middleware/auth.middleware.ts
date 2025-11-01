@@ -35,3 +35,14 @@ export const authMiddleware = (
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
+export const adminMiddleware = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  // We check the 'role' that the authMiddleware attached to req.user
+  if (req.user?.role !== 'ADMIN') {
+    return res.status(403).json({ message: 'Access denied. Admin role required.' });
+  }
+  next();
+};
