@@ -19,9 +19,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    /* Linter Checks */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
+    
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
