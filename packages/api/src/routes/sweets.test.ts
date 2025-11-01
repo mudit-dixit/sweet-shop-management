@@ -168,4 +168,32 @@ it('should return 400 if a user tries to purchase an out-of-stock sweet', async 
   expect(res.statusCode).toBe(400);
   expect(res.body.message).toBe('Sweet is out of stock');
 });
+it('should return 403 (Forbidden) if a regular user tries to restock a sweet', async () => {
+  const sweetToRestock = await Sweet.findOne({ name: 'Gummy Bears' });
+  const sweetId = sweetToRestock?._id;
+
+  const res = await request(app)
+    .post(`/api/sweets/${sweetId}/restock`)
+    .set('Authorization', `Bearer ${userToken}`) // <-- Regular user token
+    .send({ amount: 50 });
+
+  expect(res.statusCode).toBe(403);
+});
+
+it('should return 200 and the updated sweet if an admin restocks a sweet', async () => {
+  const sweetToRestock = await Sweet.findOne({ name: 'Gummy Bears' }); // quantity: 100
+  const sweetId = sweetToRestock?._id;
+
+  const res = await request(app)
+    .post(`/api/sweets/${sweetId}/restock`)
+    .set('Authorization', `Bearer ${adminToken}`) // <-- Admin token
+    .send({ amount: 50 });
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.quantity).toBe(150); // 100 + 50
+
+  // Check the database
+  const updatedSweet = await Sweet.findById(sweetId);
+  expect(updatedSweet?.quantity).toBe(150);
+});
 });
