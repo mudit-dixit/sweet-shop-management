@@ -7,6 +7,7 @@ import {
   updateSweet,
   deleteSweet,
   purchaseSweet,
+  restockSweet,
 } from '../controllers/sweet.controller';
 import { adminMiddleware, authMiddleware } from '../middleware/auth.middleware';
 
@@ -23,4 +24,7 @@ router.put('/:id', updateSweet);
 router.delete('/:id', adminMiddleware, deleteSweet);
 
 router.post('/:id/purchase', purchaseSweet);
+
+// This route is admin-only
+router.post('/:id/restock', adminMiddleware, restockSweet);
 export default router;
