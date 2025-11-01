@@ -116,4 +116,24 @@ it('should return 200 and filtered sweets when searching by price range', async 
   expect(res.body.length).toBe(1);
   expect(res.body[0].name).toBe('Chocolate Bar');
 });
+it('should return 200 and the updated sweet when updating a sweet', async () => {
+  // Find a sweet to update (created in beforeEach)
+  const sweetToUpdate = await Sweet.findOne({ name: 'Gummy Bears' });
+  const sweetId = sweetToUpdate?._id;
+
+  const updatedData = {
+    price: 2.25,
+    quantity: 110,
+  };
+
+  const res = await request(app)
+    .put(`/api/sweets/${sweetId}`)
+    .set('Authorization', `Bearer ${token}`)
+    .send(updatedData);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.price).toBe(2.25);
+  expect(res.body.quantity).toBe(110);
+  expect(res.body.name).toBe('Gummy Bears'); // Name should be unchanged
+});
 });
