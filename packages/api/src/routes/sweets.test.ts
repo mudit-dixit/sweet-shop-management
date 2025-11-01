@@ -94,4 +94,26 @@ it('should return 200 and filtered sweets when searching by name', async () => {
   expect(res.body.length).toBe(1);
   expect(res.body[0].name).toBe('Gummy Bears');
 });
+it('should return 200 and filtered sweets when searching by category', async () => {
+  // Note: The beforeEach hook created 'Gummy Bears' (Candy) and 'Chocolate Bar' (Chocolate)
+  const res = await request(app)
+    .get('/api/sweets/search?category=Chocolate') // Search for 'Chocolate'
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.length).toBe(1);
+  expect(res.body[0].name).toBe('Chocolate Bar');
+});
+
+// --- ADD THIS NEW TEST (PRICE RANGE) ---
+it('should return 200 and filtered sweets when searching by price range', async () => {
+  // 'Gummy Bears' (1.99), 'Chocolate Bar' (2.49)
+  const res = await request(app)
+    .get('/api/sweets/search?minPrice=2.00&maxPrice=3.00') // Search between 2.00 and 3.00
+    .set('Authorization', `Bearer ${token}`);
+
+  expect(res.statusCode).toBe(200);
+  expect(res.body.length).toBe(1);
+  expect(res.body[0].name).toBe('Chocolate Bar');
+});
 });
