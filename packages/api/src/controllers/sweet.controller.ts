@@ -3,7 +3,6 @@ import Sweet from '../models/sweet.model';
 
 export const getAllSweets = async (req: Request, res: Response) => {
   try {
-    // We add .sort() to make the test pass consistently
     const sweets = await Sweet.find({}).sort({ createdAt: 1 });
     res.status(200).json(sweets);
   } catch (error) {
@@ -36,17 +35,26 @@ export const createSweet = async (req: Request, res: Response) => {
 // --- THIS IS THE NEW FEATURE ---
 export const searchSweets = async (req: Request, res: Response) => {
   try {
-    // Build the query object from query params
-    const { name, category } = req.query;
+    const { name, category, minPrice, maxPrice } = req.query;
     const query: any = {};
 
     if (name) {
-      // 'i' flag makes it case-insensitive
       query.name = { $regex: name, $options: 'i' };
     }
 
     if (category) {
       query.category = category;
+    }
+
+    // --- THIS IS FIX #2 ---
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) {
+        query.price.$gte = parseFloat(minPrice as string); // $gte = greater than or equal
+      }
+      if (maxPrice) {
+        query.price.$lte = parseFloat(maxPrice as string); // $lte = less than or equal
+      }
     }
 
     const sweets = await Sweet.find(query).sort({ createdAt: 1 });
