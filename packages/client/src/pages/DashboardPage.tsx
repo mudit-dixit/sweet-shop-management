@@ -15,23 +15,22 @@ export const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // --- NEW: State for filters ---
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [purchasingId, setPurchasingId] = useState<string | null>(null); // 1. Add new state
+
+  const [purchasingId, setPurchasingId] = useState<string | null>(null);
+
   const fetchSweets = async () => {
     try {
       setLoading(true);
-      // --- UPDATED: Build search params ---
       const params = new URLSearchParams();
       if (searchTerm) params.append('name', searchTerm);
       if (category) params.append('category', category);
       if (minPrice) params.append('minPrice', minPrice);
       if (maxPrice) params.append('maxPrice', maxPrice);
 
-      // Use the correct endpoint based on whether we are searching
       const endpoint = searchTerm || category || minPrice || maxPrice ? '/sweets/search' : '/sweets';
 
       const res = await api.get(endpoint, { params });
@@ -46,34 +45,31 @@ export const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     fetchSweets();
-  }, []); // Only run once on initial load
+  }, []);
 
   const handlePurchase = async (sweetId: string) => {
-    setPurchasingId(sweetId); // 2. Set the ID of the sweet being purchased
+    setPurchasingId(sweetId);
     try {
       await api.post(`/sweets/${sweetId}/purchase`);
-      fetchSweets(); 
+      fetchSweets();
     } catch (err) {
       alert('Purchase failed. The sweet might be out of stock.');
     } finally {
-      setPurchasingId(null); // 3. Clear the ID
+      setPurchasingId(null);
     }
   };
 
-  // --- NEW: Handler for search button ---
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchSweets();
   };
 
-  // --- NEW: Handler to clear filters ---
   const clearFilters = () => {
     setSearchTerm('');
     setCategory('');
     setMinPrice('');
     setMaxPrice('');
     // We call fetchSweets inside a useEffect to avoid batching issues
-    // This is a common pattern
     setTimeout(fetchSweets, 0);
   };
 
@@ -81,7 +77,6 @@ export const DashboardPage: React.FC = () => {
     <div className="container p-8 mx-auto">
       <h1 className="mb-6 text-3xl font-bold">Available Sweets</h1>
 
-      {/* --- NEW: Search Form --- */}
       <form onSubmit={handleSearch} className="p-4 mb-6 bg-white rounded-lg shadow-md">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <input
@@ -129,18 +124,22 @@ export const DashboardPage: React.FC = () => {
           </button>
         </div>
       </form>
-      {/* --- End of Search Form --- */}
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {sweets.map((sweet) => (
-          <SweetCard
-            key={sweet._id}
-            sweet={sweet}
-            onPurchase={handlePurchase}
-            isPurchasing={purchasingId === sweet._id} // 4. Pass prop
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="p-8 text-center">Loading sweets...</div>
+      ) : error ? (
+        <div className="p-8 text-center text-red-500">{error}</div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sweets.map((sweet) => (
+            <SweetCard
+              key={sweet._id}
+              sweet={sweet}
+              onPurchase={handlePurchase}
+              isPurchasing={purchasingId === sweet._id}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
