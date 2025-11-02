@@ -9,7 +9,7 @@
     "packages/client"
   ],
   "scripts": {
-    "prepare": "is-ci || husky",
+    "prepare": "npx is-ci || npx husky",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
