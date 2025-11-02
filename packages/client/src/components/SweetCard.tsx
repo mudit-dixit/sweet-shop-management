@@ -23,7 +23,7 @@ export const SweetCard: React.FC<SweetCardProps> = ({ sweet, onPurchase }) => {
       <p className="text-sm text-gray-600">{sweet.category}</p>
       <div className="flex items-baseline justify-between mt-4">
         <span className="text-lg font-semibold text-blue-600">
-          ${sweet.price.toFixed(2)}
+          Rs{sweet.price.toFixed(2)}
         </span>
         <span className={`text-sm ${isOutOfStock ? 'text-red-500' : 'text-gray-700'}`}>
           {isOutOfStock ? 'Out of Stock' : `${sweet.quantity} in stock`}

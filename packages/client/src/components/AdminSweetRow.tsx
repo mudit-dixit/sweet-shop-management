@@ -25,7 +25,7 @@ export const AdminSweetRow: React.FC<AdminSweetRowProps> = ({
       <div>
         <p className="font-semibold text-gray-900">{sweet.name}</p>
         <p className="text-sm text-gray-600">
-          ${sweet.price.toFixed(2)} - {sweet.quantity} in stock
+          Rs{sweet.price.toFixed(2)} - {sweet.quantity} in stock
         </p>
       </div>
       <div className="flex space-x-2">

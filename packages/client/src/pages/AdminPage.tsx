@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { SweetForm, type SweetData } from '../components/SweetForm';
+import { SweetForm, type  SweetData } from '../components/SweetForm';
 import { AdminSweetRow } from '../components/AdminSweetRow';
 import api from '../lib/api';
 
-// We need the full sweet object, including _id
 interface Sweet extends SweetData {
   _id: string;
 }
@@ -12,7 +11,9 @@ export const AdminPage: React.FC = () => {
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // --- Fetch all sweets on load ---
+  // --- NEW: State for editing ---
+  const [editingSweet, setEditingSweet] = useState<Sweet | null>(null);
+
   const fetchSweets = async () => {
     try {
       setLoading(true);
@@ -41,13 +42,30 @@ export const AdminPage: React.FC = () => {
     }
   };
 
-  // --- NEW: Delete Handler ---
+  // --- NEW: Update Handler ---
+  const handleUpdateSweet = async (sweetData: SweetData) => {
+    if (!editingSweet) return;
+
+    try {
+      await api.put(`/sweets/${editingSweet._id}`, sweetData);
+      alert('Sweet updated successfully!');
+      fetchSweets(); // Refresh the list
+      setEditingSweet(null); // Go back to "Add" form
+    } catch (error) {
+      console.error('Failed to update sweet:', error);
+      alert('Failed to update sweet.');
+    }
+  };
+
   const handleDelete = async (sweetId: string) => {
     if (window.confirm('Are you sure you want to delete this sweet?')) {
       try {
         await api.delete(`/sweets/${sweetId}`);
         alert('Sweet deleted successfully!');
         fetchSweets(); // Refresh the list
+        if (editingSweet?._id === sweetId) {
+          setEditingSweet(null); // Stop editing if it was deleted
+        }
       } catch (error) {
         console.error('Failed to delete sweet:', error);
         alert('Failed to delete sweet.');
@@ -55,11 +73,14 @@ export const AdminPage: React.FC = () => {
     }
   };
 
-  // --- NEW: Edit Handler (placeholder) ---
+  // --- UPDATED: Edit Handler ---
   const handleEdit = (sweet: Sweet) => {
-    // TODO: We will implement this in the next step
-    console.log('Editing sweet:', sweet);
-    alert(`Now editing ${sweet.name}.`);
+    setEditingSweet(sweet);
+  };
+
+  // --- NEW: Cancel Edit Handler ---
+  const handleCancelEdit = () => {
+    setEditingSweet(null);
   };
 
   return (
@@ -68,10 +89,22 @@ export const AdminPage: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="md:col-span-1">
-          <SweetForm 
-            onSubmit={handleAddSweet} 
-            submitButtonText="Add Sweet" 
+          {/* --- UPDATED: Conditional Form --- */}
+          <SweetForm
+            key={editingSweet?._id || 'new'} // Force re-render on edit
+            onSubmit={editingSweet ? handleUpdateSweet : handleAddSweet}
+            initialData={editingSweet || undefined}
+            submitButtonText={editingSweet ? 'Update Sweet' : 'Add Sweet'}
           />
+          {/* --- NEW: Cancel Button --- */}
+          {editingSweet && (
+            <button
+              onClick={handleCancelEdit}
+              className="w-full px-4 py-2 mt-4 font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+            >
+              Cancel Edit
+            </button>
+          )}
         </div>
 
         <div className="md:col-span-2">
