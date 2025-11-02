@@ -4,8 +4,10 @@ import connectDB from './config/db';
 import sweetsRoutes from './routes/sweets.routes';
 export const app = express();
 
+import cors from 'cors';
 // --- Middlewares ---
 app.use(express.json()); 
+app.use(cors());
 // --- Routes ---
 app.get('/api/health', (_req: Request, res: Response) => {
   res.status(200).json({ message: 'Server is up and running!' });
