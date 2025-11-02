@@ -20,7 +20,7 @@ export const DashboardPage: React.FC = () => {
   const [category, setCategory] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-
+  const [purchasingId, setPurchasingId] = useState<string | null>(null); // 1. Add new state
   const fetchSweets = async () => {
     try {
       setLoading(true);
@@ -49,11 +49,14 @@ export const DashboardPage: React.FC = () => {
   }, []); // Only run once on initial load
 
   const handlePurchase = async (sweetId: string) => {
+    setPurchasingId(sweetId); // 2. Set the ID of the sweet being purchased
     try {
       await api.post(`/sweets/${sweetId}/purchase`);
-      fetchSweets(); // Refetch sweets to show new quantity
+      fetchSweets(); 
     } catch (err) {
       alert('Purchase failed. The sweet might be out of stock.');
+    } finally {
+      setPurchasingId(null); // 3. Clear the ID
     }
   };
 
@@ -128,17 +131,16 @@ export const DashboardPage: React.FC = () => {
       </form>
       {/* --- End of Search Form --- */}
 
-      {loading ? (
-        <div className="p-8 text-center">Loading sweets...</div>
-      ) : error ? (
-        <div className="p-8 text-center text-red-500">{error}</div>
-      ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {sweets.map((sweet) => (
-            <SweetCard key={sweet._id} sweet={sweet} onPurchase={handlePurchase} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {sweets.map((sweet) => (
+          <SweetCard
+            key={sweet._id}
+            sweet={sweet}
+            onPurchase={handlePurchase}
+            isPurchasing={purchasingId === sweet._id} // 4. Pass prop
+          />
+        ))}
+      </div>
     </div>
   );
 };

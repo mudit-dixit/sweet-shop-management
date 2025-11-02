@@ -4,6 +4,10 @@ This is a full-stack MERN (MongoDB, Express, React, Node.js) application built a
 
 The backend is built following a strict **Test-Driven Development (TDD)** methodology, with a comprehensive test suite covering all API endpoints.
 
+## 🌐 Live Demo
+
+Visit the live application at: [Sweet Shop Management System](https://sweet-shop-management-client-eight.vercel.app/login)
+
 ## 📸 Screenshots
 
 ![alt text](image-1.png)

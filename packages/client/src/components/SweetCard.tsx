@@ -12,9 +12,10 @@ interface Sweet {
 interface SweetCardProps {
   sweet: Sweet;
   onPurchase: (sweetId: string) => void;
+  isPurchasing?: boolean;
 }
 
-export const SweetCard: React.FC<SweetCardProps> = ({ sweet, onPurchase }) => {
+export const SweetCard: React.FC<SweetCardProps> = ({ sweet, onPurchase, isPurchasing }) => {
   const isOutOfStock = sweet.quantity === 0;
 
   return (
@@ -31,7 +32,7 @@ export const SweetCard: React.FC<SweetCardProps> = ({ sweet, onPurchase }) => {
       </div>
       <button
         onClick={() => onPurchase(sweet._id)}
-        disabled={isOutOfStock}
+        disabled={isOutOfStock || isPurchasing}
         className="w-full px-4 py-2 mt-4 font-medium text-white bg-blue-600 rounded-md 
                    hover:bg-blue-700 focus:outline-none focus:ring-2 
                    focus:ring-offset-2 focus:ring-blue-500

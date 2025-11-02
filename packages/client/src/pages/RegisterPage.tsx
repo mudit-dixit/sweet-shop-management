@@ -7,26 +7,26 @@ export const RegisterPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false); 
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError(null);
-  setSuccess(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setIsLoading(true); // 2. Set loading true
 
-  try {
-    // Send the data to our backend
-    await api.post('/auth/register', { email, password });
-
-    // If successful
-    setSuccess('Registration successful! Please log in.');
-    setEmail('');
-    setPassword('');
-  } catch (err: any) {
-    // If an error happens
-    const message = err.response?.data?.message || 'Registration failed. Please try again.';
-    setError(message);
-  }
-};
+    try {
+      await api.post('/auth/register', { email, password });
+      setSuccess('Registration successful! Please log in.');
+      setEmail('');
+      setPassword('');
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Registration failed. Please try again.';
+      setError(message);
+    } finally {
+      setIsLoading(false); // 3. Set loading false
+    }
+  };
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
@@ -81,9 +81,11 @@ const handleSubmit = async (e: React.FormEvent) => {
 
           <button
             type="submit"
-            className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            disabled={isLoading} 
+            className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                       disabled:bg-gray-400 disabled:cursor-wait" 
           >
-            Register
+            {isLoading ? 'Registering...' : 'Register'} 
           </button>
         </form>
 

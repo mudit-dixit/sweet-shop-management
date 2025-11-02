@@ -10,6 +10,7 @@ interface Sweet extends SweetData {
 export const AdminPage: React.FC = () => {
   const [sweets, setSweets] = useState<Sweet[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false); // 1. Add state
 
   // --- NEW: State for editing ---
   const [editingSweet, setEditingSweet] = useState<Sweet | null>(null);
@@ -32,28 +33,32 @@ export const AdminPage: React.FC = () => {
   }, []);
 
   const handleAddSweet = async (sweet: SweetData) => {
+    setIsSubmitting(true); // 2. Set true
     try {
       await api.post('/sweets', sweet);
       alert('Sweet added successfully!');
-      fetchSweets(); // Refresh the list
+      fetchSweets(); 
     } catch (error) {
       console.error('Failed to add sweet:', error);
       alert('Failed to add sweet. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // --- NEW: Update Handler ---
   const handleUpdateSweet = async (sweetData: SweetData) => {
     if (!editingSweet) return;
-
+    setIsSubmitting(true); 
     try {
       await api.put(`/sweets/${editingSweet._id}`, sweetData);
       alert('Sweet updated successfully!');
-      fetchSweets(); // Refresh the list
-      setEditingSweet(null); // Go back to "Add" form
+      fetchSweets(); 
+      setEditingSweet(null);
     } catch (error) {
       console.error('Failed to update sweet:', error);
       alert('Failed to update sweet.');
+    } finally {
+      setIsSubmitting(false); 
     }
   };
 
@@ -90,11 +95,12 @@ export const AdminPage: React.FC = () => {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="md:col-span-1">
           {/* --- UPDATED: Conditional Form --- */}
-          <SweetForm
-            key={editingSweet?._id || 'new'} // Force re-render on edit
+         <SweetForm
+            key={editingSweet?._id || 'new'}
             onSubmit={editingSweet ? handleUpdateSweet : handleAddSweet}
             initialData={editingSweet || undefined}
             submitButtonText={editingSweet ? 'Update Sweet' : 'Add Sweet'}
+            isLoading={isSubmitting} // 4. Pass prop
           />
           {/* --- NEW: Cancel Button --- */}
           {editingSweet && (

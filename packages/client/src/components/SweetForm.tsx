@@ -13,8 +13,8 @@ interface SweetFormProps {
   onSubmit: (sweet: SweetData) => void;
   initialData?: SweetData;
   submitButtonText?: string;
+  isLoading?: boolean; // 1. Add prop
 }
-
 const defaultData: SweetData = {
   name: '',
   category: '',
@@ -26,6 +26,7 @@ export const SweetForm: React.FC<SweetFormProps> = ({
   onSubmit,
   initialData = defaultData,
   submitButtonText = 'Submit',
+  isLoading
 }) => {
   const [sweet, setSweet] = useState<SweetData>(initialData);
 
@@ -113,9 +114,11 @@ export const SweetForm: React.FC<SweetFormProps> = ({
       </div>
       <button
         type="submit"
-        className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+        disabled={isLoading} // 2. Update disabled check
+        className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700
+                   disabled:bg-gray-400 disabled:cursor-wait" // 3. Add disabled style
       >
-        {submitButtonText}
+        {isLoading ? 'Submitting...' : submitButtonText} {/* 4. Update text */}
       </button>
     </form>
   );
