@@ -1,8 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
-import { DashboardPage } from './pages/DashboardPage'; // 1. Import
-import { Navbar } from './components/Navbar'; // 2. Import
+import { DashboardPage } from './pages/DashboardPage';
+import { Navbar } from './components/Navbar';
+import { AdminProtectedRoute } from './components/AdminProtectedRoute'; 
+import { AdminPage } from './pages/AdminPage';
 
 function App() {
   return (
@@ -10,9 +12,15 @@ function App() {
       <Navbar />
       <main>
         <Routes>
-          <Route path="/" element={<DashboardPage />} /> 
+          {/* Public Routes */}
+          <Route path="/" element={<DashboardPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+
+          {/* 3. Add Protected Admin Route */}
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
         </Routes>
       </main>
     </div>

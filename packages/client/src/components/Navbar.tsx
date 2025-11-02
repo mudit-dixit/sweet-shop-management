@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 
 export const Navbar: React.FC = () => {
-  const { token, logout } = useAuth();
+  // 1. Get the user object
+  const { token, user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -16,7 +17,14 @@ export const Navbar: React.FC = () => {
       <Link to="/" className="text-2xl font-bold text-blue-600">
         Sweet Shop
       </Link>
-      <div>
+      <div className="flex items-center space-x-4">
+        {/* 2. Conditionally show Admin link */}
+        {user?.role === 'ADMIN' && (
+          <Link to="/admin" className="font-medium text-gray-700 hover:text-blue-600">
+            Admin
+          </Link>
+        )}
+
         {token ? (
           <button
             onClick={handleLogout}
